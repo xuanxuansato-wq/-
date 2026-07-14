@@ -1,0 +1,13 @@
+.agents/
+.codex/
+*.zip
+*.crx
+*.pem
+*.key
+*.log
+node_modules/
+dist/
+build/
+tmp/
+temp/
+test-shot.html

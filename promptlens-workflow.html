@@ -1,0 +1,1250 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CHROME插件-识图和识视频</title>
+  <style>
+    :root {
+      --blue: #207ea6;
+      --blue-2: #2b92bf;
+      --line: #cfe7f6;
+      --ink: #122033;
+      --muted: #5d7895;
+      --soft: #f5fbff;
+      --card: #ffffff;
+      --pill: #eef6ff;
+      --green: #43b883;
+      --shadow: 0 16px 36px rgba(28, 99, 139, 0.11);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 28px;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(66, 184, 131, 0.11), transparent 28%),
+        radial-gradient(circle at 84% 12%, rgba(32, 126, 166, 0.12), transparent 32%),
+        linear-gradient(180deg, #f9fdff 0%, #eef8ff 100%);
+    }
+
+    .board {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 28px;
+      border: 1px solid #b9dced;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .title-wrap {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .mark {
+      width: 8px;
+      height: 43px;
+      border-radius: 999px;
+      background: var(--blue-2);
+      flex: 0 0 auto;
+      margin-top: 4px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .badge {
+      border: 0;
+      white-space: nowrap;
+      padding: 10px 18px;
+      border-radius: 999px;
+      color: #fff;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      box-shadow: 0 10px 20px rgba(32, 126, 166, 0.18);
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 30px;
+      align-items: center;
+      padding: 18px 88px 20px;
+    }
+
+    .node-wrap {
+      position: relative;
+      min-width: 0;
+    }
+
+    .node-wrap:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -24px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--blue);
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .node {
+      min-height: 138px;
+      padding: 18px 14px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      text-align: center;
+      background: linear-gradient(180deg, #fff 0%, #f7fbff 100%);
+      box-shadow: 0 12px 26px rgba(27, 98, 139, 0.08);
+    }
+
+    .icon {
+      font-size: 34px;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    .node-title {
+      font-weight: 800;
+      font-size: 16px;
+      margin-bottom: 9px;
+    }
+
+    .node-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      color: #245f8f;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--pill);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1.1fr 1.4fr;
+      gap: 14px;
+      margin: 12px 0 26px;
+      padding: 18px 22px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: #f6fbff;
+    }
+
+    .info-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      min-width: 0;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .info-item strong { color: #102033; }
+
+    .section {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: rgba(248, 253, 255, 0.88);
+      margin-top: 22px;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      color: #103a56;
+      font-size: 22px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .step-card {
+      position: relative;
+      min-height: 178px;
+      padding: 20px;
+      border: 1px solid #d5e9f5;
+      border-radius: 22px;
+      background: var(--card);
+      box-shadow: 0 10px 24px rgba(27, 98, 139, 0.07);
+      overflow: hidden;
+    }
+
+    .step-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--blue), var(--green));
+    }
+
+    .step-index {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      color: #166b92;
+      font-size: 12px;
+      font-weight: 800;
+      background: #eaf7ff;
+      margin-bottom: 12px;
+    }
+
+    .step-title {
+      margin: 0 0 10px;
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .step-desc {
+      margin: 0 0 14px;
+      color: #405d78;
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .output {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 12px;
+      color: #1d6b54;
+      font-size: 13px;
+      font-weight: 700;
+      background: #ecfbf5;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .mini-card {
+      padding: 18px 20px;
+      border: 1px solid #d5e9f5;
+      border-radius: 20px;
+      background: #fff;
+    }
+
+    .mini-card h3 {
+      margin: 0 0 12px;
+      font-size: 17px;
+      color: #123a54;
+    }
+
+    .screenshots {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .screenshot-card {
+      overflow: hidden;
+      border: 1px solid #d5e9f5;
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 12px 26px rgba(27, 98, 139, 0.08);
+    }
+
+    .screenshot-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #eef8ff;
+    }
+
+    .screenshot-meta {
+      padding: 14px 16px 16px;
+    }
+
+    .screenshot-meta h3 {
+      margin: 0 0 8px;
+      color: #123a54;
+      font-size: 16px;
+    }
+
+    .screenshot-meta p {
+      margin: 0;
+      color: #5d7895;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .record-demo {
+      display: grid;
+      grid-template-columns: 1.05fr 0.78fr 0.72fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .demo-player {
+      position: relative;
+      min-height: 390px;
+      overflow: hidden;
+      border-radius: 24px;
+      background: #111a22;
+      box-shadow: 0 16px 32px rgba(17, 26, 34, 0.18);
+    }
+
+    .demo-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      color: #dff5ff;
+      font-size: 14px;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .demo-screen {
+      position: relative;
+      height: 276px;
+      margin: 18px;
+      border-radius: 20px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.38), transparent 18%),
+        radial-gradient(circle at 82% 28%, rgba(81, 200, 255, 0.38), transparent 24%),
+        linear-gradient(135deg, #84c8e8 0%, #2a6170 48%, #101820 100%);
+    }
+
+    .demo-screen::before {
+      content: "";
+      position: absolute;
+      inset: auto -8% 0;
+      height: 45%;
+      background: linear-gradient(180deg, rgba(90, 153, 114, 0.72), rgba(22, 45, 38, 0.96));
+      clip-path: polygon(0 42%, 18% 28%, 32% 50%, 52% 24%, 70% 42%, 100% 16%, 100% 100%, 0 100%);
+    }
+
+    .demo-play {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 68px;
+      height: 68px;
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.42);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 28px;
+      animation: pulse 2.2s infinite;
+    }
+
+    .jump-badge {
+      position: absolute;
+      left: 22px;
+      bottom: 20px;
+      padding: 10px 13px;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      background: rgba(12, 22, 28, 0.72);
+      backdrop-filter: blur(8px);
+    }
+
+    .demo-timeline {
+      margin: 0 18px 18px;
+    }
+
+    .demo-time {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      color: #bfe4f2;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .demo-track {
+      overflow: hidden;
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .demo-progress {
+      width: 42%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #43b883, #59c7ff);
+      animation: seek 7s ease-in-out infinite;
+    }
+
+    .demo-script {
+      display: grid;
+      gap: 12px;
+    }
+
+    .script-row {
+      padding: 14px;
+      border: 1px solid #d5e9f5;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(27, 98, 139, 0.06);
+    }
+
+    .script-row.is-active {
+      border-color: rgba(67, 184, 131, 0.56);
+      background: #f0fcf6;
+    }
+
+    .script-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 9px;
+    }
+
+    .time-chip {
+      border: 0;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: #1d6b54;
+      font-size: 13px;
+      font-weight: 850;
+      background: #dcf8ec;
+    }
+
+    .script-row p {
+      margin: 0;
+      color: #405d78;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .record-note {
+      margin: 14px 0 0;
+      color: #5d7895;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .operation-panel {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .mock-toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 14px;
+      border-radius: 18px;
+      background: #172128;
+      box-shadow: 0 12px 24px rgba(17, 26, 34, 0.12);
+    }
+
+    .mock-button {
+      padding: 9px 13px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 850;
+      background: #303941;
+    }
+
+    .mock-button.is-primary {
+      background: linear-gradient(135deg, #207ea6, #43b883);
+    }
+
+    .operation-step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      padding: 13px;
+      border: 1px solid #d5e9f5;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(27, 98, 139, 0.06);
+    }
+
+    .operation-step.is-active {
+      border-color: rgba(67, 184, 131, 0.56);
+      background: #f0fcf6;
+    }
+
+    .operation-num {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      background: #207ea6;
+    }
+
+    .operation-step strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #123a54;
+      font-size: 14px;
+    }
+
+    .operation-step span {
+      color: #5d7895;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .operation-output {
+      padding: 14px;
+      border-radius: 18px;
+      color: #1d6b54;
+      font-size: 13px;
+      line-height: 1.7;
+      background: #ecfbf5;
+      border: 1px solid rgba(67, 184, 131, 0.28);
+    }
+
+    .record-demo {
+      position: relative;
+      display: grid;
+      grid-template-columns: 48% 52%;
+      gap: 0;
+      min-height: 660px;
+      overflow: hidden;
+      border-radius: 28px;
+      background:
+        linear-gradient(90deg, #14211d 0 47%, rgba(86, 168, 28, 0.95) 47% 100%),
+        radial-gradient(circle at 70% 20%, rgba(155, 235, 77, 0.36), transparent 30%);
+      box-shadow: 0 18px 42px rgba(18, 49, 36, 0.18);
+    }
+
+    .record-video-wrap {
+      position: relative;
+      min-height: 660px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(90deg, #111 0 9%, #2d5d2d 9% 91%, #111 91% 100%);
+    }
+
+    .floating-toolbar {
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      z-index: 3;
+      display: flex;
+      gap: 8px;
+      padding: 9px;
+      border-radius: 12px;
+      background: rgba(18, 25, 29, 0.88);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(10px);
+    }
+
+    .floating-toolbar span {
+      padding: 8px 12px;
+      border-radius: 9px;
+      color: #f5fbff;
+      font-size: 13px;
+      font-weight: 850;
+      background: #303941;
+    }
+
+    .floating-toolbar span:first-child {
+      background: linear-gradient(135deg, #207ea6, #43b883);
+    }
+
+    .phone-video {
+      position: relative;
+      width: min(360px, 78%);
+      aspect-ratio: 9 / 16;
+      overflow: hidden;
+      border-left: 18px solid #090909;
+      border-right: 18px solid #090909;
+      background:
+        radial-gradient(circle at 48% 70%, rgba(226, 255, 179, 0.45), transparent 13%),
+        radial-gradient(circle at 45% 18%, rgba(255, 255, 255, 0.28), transparent 8%),
+        repeating-radial-gradient(circle at 50% 50%, rgba(145, 255, 57, 0.18) 0 5px, rgba(88, 190, 18, 0.18) 6px 10px),
+        linear-gradient(180deg, #78e919 0%, #38a916 100%);
+      box-shadow: 0 24px 52px rgba(0, 0, 0, 0.28);
+    }
+
+    .game-timer {
+      position: absolute;
+      left: 50%;
+      top: 12px;
+      transform: translateX(-50%);
+      padding: 7px 34px 10px;
+      border-radius: 18px;
+      color: #fff;
+      font-size: 28px;
+      font-weight: 900;
+      background: #4b3d9f;
+      box-shadow: inset 0 -7px 0 rgba(50, 220, 55, 0.9), 0 4px 0 rgba(35, 25, 91, 0.45);
+    }
+
+    .game-bubble {
+      position: absolute;
+      left: 50%;
+      top: 215px;
+      transform: translateX(-50%);
+      min-width: 245px;
+      padding: 16px 22px;
+      border: 5px solid #6654c6;
+      border-radius: 22px;
+      color: #1d1d1d;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 900;
+      background: #fffef5;
+    }
+
+    .snake-body {
+      position: absolute;
+      left: 50%;
+      top: 336px;
+      width: 58px;
+      height: 150px;
+      transform: translateX(-50%);
+      border-radius: 40px;
+      background: linear-gradient(180deg, #a7d634, #75a812);
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.18);
+    }
+
+    .snake-body::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      bottom: -16px;
+      width: 46px;
+      height: 36px;
+      border-radius: 50%;
+      background: #d5b11e;
+    }
+
+    .joystick {
+      position: absolute;
+      left: 50%;
+      bottom: 74px;
+      width: 180px;
+      height: 180px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: rgba(222, 255, 214, 0.45);
+      border: 2px solid rgba(255, 255, 255, 0.28);
+    }
+
+    .video-play {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      transform: translate(-50%, -50%);
+      width: 0;
+      height: 0;
+      border-top: 28px solid transparent;
+      border-bottom: 28px solid transparent;
+      border-left: 44px solid rgba(255, 255, 255, 0.9);
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.22));
+    }
+
+    .record-side-panel {
+      position: relative;
+      align-self: center;
+      justify-self: center;
+      width: min(560px, 90%);
+      max-height: 570px;
+      overflow: auto;
+      padding: 18px;
+      border-radius: 16px;
+      color: #eef8f3;
+      background: rgba(16, 25, 21, 0.94);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.32);
+    }
+
+    .record-side-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .record-side-panel::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: rgba(180, 221, 205, 0.42);
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .recording-chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: #061812;
+      font-size: 12px;
+      background: #9bf2c8;
+    }
+
+    .replace-note,
+    .record-output {
+      padding: 12px 14px;
+      border: 1px solid rgba(166, 240, 220, 0.18);
+      border-radius: 12px;
+      color: #dcebe5;
+      font-size: 13px;
+      line-height: 1.7;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .replace-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 12px 0 16px;
+    }
+
+    .field-box {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(166, 240, 220, 0.22);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .field-box span {
+      display: block;
+      margin-bottom: 4px;
+      color: #a6f0dc;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .field-box strong {
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .shot-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 18px 0 10px;
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .shot-count {
+      color: #a6f0dc;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .shot-edit-card {
+      margin-bottom: 12px;
+      padding: 14px;
+      border: 1px solid rgba(166, 240, 220, 0.18);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .shot-edit-card.is-active {
+      border-color: rgba(67, 184, 131, 0.74);
+      box-shadow: 0 0 0 1px rgba(67, 184, 131, 0.18);
+    }
+
+    .shot-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .shot-time-edit {
+      display: grid;
+      grid-template-columns: 1fr 58px;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .fake-input,
+    .fake-textarea {
+      border: 1px solid rgba(166, 240, 220, 0.22);
+      border-radius: 9px;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .fake-input {
+      padding: 9px 11px;
+      font-weight: 850;
+    }
+
+    .fake-jump {
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 9px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      background: rgba(255, 255, 255, 0.16);
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease;
+      font-family: inherit;
+    }
+
+    .fake-jump:hover {
+      transform: translateY(-1px);
+      background: rgba(67, 184, 131, 0.5);
+    }
+
+    .shot-edit-card.is-active .fake-jump {
+      background: #43b883;
+    }
+
+    .fake-label {
+      display: block;
+      margin: 10px 0 6px;
+      color: #a6f0dc;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .fake-textarea {
+      min-height: 70px;
+      padding: 10px;
+      color: #eef8f3;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .locate-toast {
+      position: absolute;
+      right: 24px;
+      bottom: 24px;
+      z-index: 4;
+      max-width: 330px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      color: #061812;
+      font-size: 13px;
+      font-weight: 900;
+      background: rgba(155, 242, 200, 0.94);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .phone-video[data-shot="2"] {
+      filter: hue-rotate(18deg) saturate(1.05);
+    }
+
+    .phone-video[data-shot="3"] {
+      filter: hue-rotate(34deg) saturate(1.12);
+    }
+
+    @keyframes seek {
+      0%, 18% { width: 14%; }
+      32%, 52% { width: 42%; }
+      66%, 84% { width: 68%; }
+      100% { width: 14%; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.92; }
+      50% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+    }
+
+    .list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      color: #4b6682;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .list li {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin: 26px 0 4px;
+      color: #5c7a98;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1180px) {
+      .pipeline {
+        grid-template-columns: repeat(3, minmax(150px, 1fr));
+        padding: 18px 10px 20px;
+      }
+
+      .node-wrap:not(:last-child)::after { display: none; }
+      .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .info-grid { grid-template-columns: 1fr; }
+      .record-demo { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 14px; }
+      .board { padding: 18px; border-radius: 22px; }
+      .topbar { flex-direction: column; }
+      .pipeline, .steps, .two-col, .screenshots { grid-template-columns: 1fr; }
+      h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <header class="topbar">
+      <div class="title-wrap">
+        <span class="mark"></span>
+        <div>
+          <h1>CHROME插件-识图和识视频</h1>
+          <p class="subtitle">素材识别 → AI 反推 → 分镜结构化 → 人工编辑 → 生图预览 / 即梦复用 → 下载归档</p>
+        </div>
+      </div>
+      <div class="badge">Chrome 插件工作流</div>
+    </header>
+
+    <section class="pipeline" aria-label="核心流程">
+      <div class="node-wrap">
+        <div class="node">
+          <div class="icon">🎞️</div>
+          <div class="node-title">素材入口</div>
+          <div class="node-pill">图片 / 视频</div>
+        </div>
+      </div>
+      <div class="node-wrap">
+        <div class="node">
+          <div class="icon">🧠</div>
+          <div class="node-title">AI 识别</div>
+          <div class="node-pill">GPT / Gemini / 豆包</div>
+        </div>
+      </div>
+      <div class="node-wrap">
+        <div class="node">
+          <div class="icon">📝</div>
+          <div class="node-title">提示词生成</div>
+          <div class="node-pill">中文即梦 Prompt</div>
+        </div>
+      </div>
+      <div class="node-wrap">
+        <div class="node">
+          <div class="icon">🎬</div>
+          <div class="node-title">视频分镜</div>
+          <div class="node-pill">时间 / 画面 / BGM / 镜头</div>
+        </div>
+      </div>
+      <div class="node-wrap">
+        <div class="node">
+          <div class="icon">🖼️</div>
+          <div class="node-title">生图预览</div>
+          <div class="node-pill">比例 + 多 API</div>
+        </div>
+      </div>
+      <div class="node-wrap">
+        <div class="node">
+          <div class="icon">📦</div>
+          <div class="node-title">本地归档</div>
+          <div class="node-pill">图片 / 视频 / 分镜</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="info-grid" aria-label="工具能力">
+      <div class="info-item"><span>🔑</span><div><strong>识别 API：</strong>支持 Gemini、GPT、豆包、即梦等服务商，用于识图和视频关键帧反推。</div></div>
+      <div class="info-item"><span>🎨</span><div><strong>生图 API：</strong>可单独配置 GPT / Gemini / 豆包 / 即梦，用于提示词快速预览。</div></div>
+      <div class="info-item"><span>⚙️</span><div><strong>核心能力：</strong>视频抽帧、5s-35s 节选、分镜编辑、镜头时间定位视频、图片/视频下载。</div></div>
+    </section>
+
+    <section class="section">
+      <h2>🧭 使用步骤</h2>
+      <div class="steps">
+        <article class="step-card">
+          <span class="step-index">Step 1</span>
+          <h3 class="step-title">配置 API</h3>
+          <p class="step-desc">在设置页填写识别 API 与生图预览 API；两套配置互不影响，额度不足时可切换服务商。</p>
+          <span class="output">输出：可用模型环境</span>
+        </article>
+
+        <article class="step-card">
+          <span class="step-index">Step 2</span>
+          <h3 class="step-title">打开素材页</h3>
+          <p class="step-desc">进入广告素材、图片或视频页面，悬停目标内容后会出现识别、下载、设置等快捷按钮。</p>
+          <span class="output">输出：待识别素材</span>
+        </article>
+
+        <article class="step-card">
+          <span class="step-index">Step 3</span>
+          <h3 class="step-title">识图 / 识视频</h3>
+          <p class="step-desc">图片直接反推中文提示词；视频可选择 5s、10s、15s、25s、30s、35s 节选并抽取关键帧。</p>
+          <span class="output">输出：提示词 / 分镜初稿</span>
+        </article>
+
+        <article class="step-card">
+          <span class="step-index">Step 4</span>
+          <h3 class="step-title">编辑结构</h3>
+          <p class="step-desc">视频先统一修改主体、场景、风格，再逐镜头调整镜头时间、画面描述、BGM、镜头语言。</p>
+          <span class="output">输出：可复用分镜表</span>
+        </article>
+
+        <article class="step-card">
+          <span class="step-index">Step 5</span>
+          <h3 class="step-title">预览与复用</h3>
+          <p class="step-desc">选择 1:1、9:16、16:9、3:4、4:3 等比例生成预览图，或复制即梦中文提示词继续创作。</p>
+          <span class="output">输出：生图预览 / 即梦 Prompt</span>
+        </article>
+
+        <article class="step-card">
+          <span class="step-index">Step 6</span>
+          <h3 class="step-title">下载归档</h3>
+          <p class="step-desc">下载识别图片、预览图、视频素材与分镜内容，沉淀为本地素材库，方便后续批量复盘。</p>
+          <span class="output">输出：本地素材资产</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>📍 录播式定位演示</h2>
+      <div class="record-demo">
+        <div class="record-video-wrap">
+          <div class="floating-toolbar">
+            <span>识视频</span>
+            <span>下载</span>
+            <span>设置</span>
+          </div>
+
+          <div class="phone-video" data-shot="1" aria-label="录播视频画面">
+            <div class="game-timer">3:13</div>
+            <div class="game-bubble">Eat these to<br />complete a level!</div>
+            <div class="snake-body"></div>
+            <div class="joystick"></div>
+            <div class="video-play"></div>
+          </div>
+          <div class="locate-toast">当前定位：镜头 1 · 0s-2s</div>
+        </div>
+
+        <aside class="record-side-panel" aria-label="录播操作工具面板">
+          <div class="panel-head">
+            <span>分镜脚本定位工具</span>
+            <span class="recording-chip">录播演示中</span>
+          </div>
+
+          <div class="replace-fields">
+            <div class="field-box">
+              <span>主体</span>
+              <strong>卡通蛇角色</strong>
+            </div>
+            <div class="field-box">
+              <span>场景</span>
+              <strong>绿色草地关卡</strong>
+            </div>
+            <div class="field-box">
+              <span>风格</span>
+              <strong>休闲游戏 / 2D+3D</strong>
+            </div>
+            <div class="field-box">
+              <span>用途</span>
+              <strong>边录边校准脚本</strong>
+            </div>
+          </div>
+
+          <div class="replace-note">
+            操作逻辑：先反推出分镜脚本，再点击每条镜头时间旁边的「跳转」按钮，视频会定位到对应画面，方便录播讲解和二次修改。
+          </div>
+
+          <div class="shot-title">
+            <span>镜头调整</span>
+            <span class="shot-count">10 个镜头</span>
+          </div>
+
+          <article class="shot-edit-card is-active">
+            <div class="shot-card-head">
+              <span>镜头 1</span>
+              <span class="shot-count">当前定位</span>
+            </div>
+            <label class="fake-label">镜头时间</label>
+            <div class="shot-time-edit">
+              <div class="fake-input">0s-2s</div>
+              <button class="fake-jump" type="button" data-shot="1" data-time="0s-2s" data-title="镜头 1">跳转</button>
+            </div>
+            <label class="fake-label">画面描述</label>
+            <div class="fake-textarea">黄色卡通蛇在绿色草地上移动，吃掉物品，头顶显示“+1”，上方有完成关卡提示框。</div>
+            <label class="fake-label">BGM</label>
+            <div class="fake-textarea">轻松愉快的游戏音效，吃水果时有清脆提示声。</div>
+            <label class="fake-label">镜头语言</label>
+            <div class="fake-textarea">俯视固定机位，中景，画面中心构图。</div>
+          </article>
+
+          <article class="shot-edit-card">
+            <div class="shot-card-head">
+              <span>镜头 2</span>
+              <span class="shot-count">下一段</span>
+            </div>
+            <label class="fake-label">镜头时间</label>
+            <div class="shot-time-edit">
+              <div class="fake-input">2s-4s</div>
+              <button class="fake-jump" type="button" data-shot="2" data-time="2s-4s" data-title="镜头 2">跳转</button>
+            </div>
+            <label class="fake-label">画面描述</label>
+            <div class="fake-textarea">画面切到深色渐变背景，出现游戏 Logo 和奖励元素，作为转场收尾。</div>
+          </article>
+
+          <article class="shot-edit-card">
+            <div class="shot-card-head">
+              <span>镜头 3</span>
+              <span class="shot-count">高光段</span>
+            </div>
+            <label class="fake-label">镜头时间</label>
+            <div class="shot-time-edit">
+              <div class="fake-input">4s-6s</div>
+              <button class="fake-jump" type="button" data-shot="3" data-time="4s-6s" data-title="镜头 3">跳转</button>
+            </div>
+            <label class="fake-label">画面描述</label>
+            <div class="fake-textarea">角色吃到关键道具，画面中心出现奖励反馈，适合标记为视频高光片段。</div>
+          </article>
+
+          <div class="record-output">
+            录播呈现方式：一边播放视频，一边点击「跳转」定位镜头，再同步展示画面描述、BGM、镜头语言如何被修改。
+          </div>
+        </aside>
+      </div>
+      <p class="record-note">呈现重点：反推出来的分镜脚本不是静态文本，每个镜头时间都可以作为视频定位入口，适合做录播复盘、脚本校准和素材讲解。</p>
+    </section>
+
+    <section class="section">
+      <h2>🖼️ 工具使用截图</h2>
+      <div class="screenshots">
+        <article class="screenshot-card">
+          <img src="assets/promptlens-screenshot-storyboard.png" alt="视频分镜编辑截图" />
+          <div class="screenshot-meta">
+            <h3>视频分镜编辑</h3>
+            <p>识别后按主体、场景、风格和镜头时间、画面描述、BGM、镜头语言进行结构化调整。</p>
+          </div>
+        </article>
+
+        <article class="screenshot-card">
+          <img src="assets/promptlens-screenshot-image-prompt.png" alt="图片反推与生图预览截图" />
+          <div class="screenshot-meta">
+            <h3>图片反推与生图预览</h3>
+            <p>图片可打开大图、下载原图、编辑中文提示词，并选择常用比例生成预览。</p>
+          </div>
+        </article>
+
+        <article class="screenshot-card">
+          <img src="assets/promptlens-screenshot-settings.png" alt="多 API 设置截图" />
+          <div class="screenshot-meta">
+            <h3>多 API 设置</h3>
+            <p>识别模型和生图预览模型分开配置，额度不足时可以快速切换 GPT、Gemini、豆包或即梦。</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>📌 产出结构</h2>
+      <div class="two-col">
+        <div class="mini-card">
+          <h3>图片反推</h3>
+          <ul class="list">
+            <li><span>①</span><span>上传或选中图片，生成中文生图提示词。</span></li>
+            <li><span>②</span><span>在弹窗内直接修改提示词，复制或调用 API 生成预览。</span></li>
+            <li><span>③</span><span>缩略图可点开查看正常尺寸，并支持直接下载。</span></li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <h3>视频分镜</h3>
+          <ul class="list">
+            <li><span>①</span><span>按选定秒数抽关键帧，秒数越长抽帧越多。</span></li>
+            <li><span>②</span><span>先编辑主体、场景、风格，再修改每个镜头细节。</span></li>
+            <li><span>③</span><span>镜头时间从 0 开始，点击时间可跳到对应视频帧。</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">当前闭环：原始素材 → AI 分析 → 人工校准 → 即梦 / 生图 API 复用 → 本地资产归档。</p>
+  </main>
+
+  <script>
+    (() => {
+      const demo = document.querySelector('.record-demo');
+      if (!demo) return;
+
+      const video = demo.querySelector('.phone-video');
+      const toast = demo.querySelector('.locate-toast');
+      const buttons = demo.querySelectorAll('.fake-jump[data-shot]');
+      const cards = demo.querySelectorAll('.shot-edit-card');
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const shot = button.dataset.shot;
+          const time = button.dataset.time;
+          const title = button.dataset.title;
+          const card = button.closest('.shot-edit-card');
+
+          cards.forEach((item) => item.classList.toggle('is-active', item === card));
+          video.dataset.shot = shot;
+          toast.textContent = `当前定位：${title} · ${time}`;
+          toast.animate(
+            [
+              { transform: 'translateY(0)', opacity: 0.72 },
+              { transform: 'translateY(-4px)', opacity: 1 },
+              { transform: 'translateY(0)', opacity: 1 }
+            ],
+            { duration: 420, easing: 'ease-out' }
+          );
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>分镜脚本图片编辑器</title>
+  <link rel="stylesheet" href="storyboard.css" />
+</head>
+<body>
+  <main class="story-shell">
+    <header class="story-hero">
+      <div>
+        <p class="eyebrow">PromptLens Jimeng</p>
+        <h1>分镜脚本图片编辑器</h1>
+        <p class="subtitle">自动带入识视频后的分镜和抽帧，可补充主体、场景、风格和 BGM 中文描述，生成内部对接用图片。</p>
+      </div>
+      <div class="hero-actions">
+        <button id="reload-job" type="button">刷新数据</button>
+        <button id="copy-text" type="button">复制脚本文本</button>
+        <button id="generate-image" type="button" class="primary">生成脚本图片</button>
+        <button id="download-editable" type="button">下载可编辑文件</button>
+      </div>
+    </header>
+
+    <section class="panel source-panel">
+      <div>
+        <h2 id="job-title">未载入分镜</h2>
+        <p id="job-meta">请从识视频结果里点击「打开分镜编辑器」。</p>
+      </div>
+      <a id="source-link" href="#" target="_blank" rel="noopener" hidden>打开原页面</a>
+    </section>
+
+    <section class="panel">
+      <div class="section-title">
+        <h2>全局参考列表</h2>
+        <p>主体、场景、风格都可上传参考图片；主体图片会自动同步到镜头资产，BGM 作为全局文字信息管理。</p>
+      </div>
+      <div class="reference-grid" id="reference-grid"></div>
+    </section>
+
+    <section class="layout">
+      <section class="panel editor-panel">
+        <div class="section-title">
+          <h2>分镜与对应抽帧</h2>
+          <p>每个镜头分开管理「分镜图」和「资产图」：支持复制图片多次上传，分镜仍保留对应抽帧。</p>
+        </div>
+        <div id="video-script-editor" class="video-script-editor"></div>
+        <div id="shot-list" class="shot-list"></div>
+      </section>
+    </section>
+
+    <canvas id="export-canvas" hidden></canvas>
+  </main>
+
+  <script src="storyboard.js"></script>
+</body>
+</html>

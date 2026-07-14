@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>视频批处理工具</title>
+    <link rel="stylesheet" href="merge.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <span class="brand-mark">▶</span>
+          <h1>视频批处理工具</h1>
+        </div>
+        <span class="version-pill">v2.0</span>
+      </header>
+
+      <nav class="step-tabs" aria-label="处理步骤">
+        <button class="step-tab" data-step-target="upload" type="button">1. 上传文件</button>
+        <button class="step-tab" data-step-target="configure" type="button">2. 处理配置</button>
+        <button class="step-tab" data-step-target="process" type="button">3. 批量处理</button>
+      </nav>
+
+      <section class="step-panel" data-step-panel="upload">
+        <div class="task-card">
+          <div class="card-title">
+            <span class="title-token">V</span>
+            <strong>上传视频文件</strong>
+          </div>
+          <label class="drop-zone" id="video-dropzone">
+            <input id="video-file-input" type="file" accept="video/mp4,video/webm,video/quicktime,video/*" multiple />
+            <span class="drop-icon">▣</span>
+            <span>拖拽视频文件到此处，或点击选择</span>
+            <small>支持 MP4 / MOV / AVI / MKV / WebM / FLV</small>
+          </label>
+          <div class="batch-rename">
+            <label class="text-field wide">
+              <span>批量修改视频名称</span>
+              <input id="batch-rename-pattern" autocomplete="off" placeholder="例如：作品-{n}" />
+            </label>
+            <button id="apply-batch-rename" class="tool-button" type="button">批量改名</button>
+            <button id="clear-uploaded-videos" class="ghost" type="button">清空视频</button>
+          </div>
+          <div class="upload-preview-grid" id="upload-preview"></div>
+        </div>
+
+        <div class="footer-actions">
+          <button class="primary" data-next-step="configure" type="button">下一步：配置处理 →</button>
+        </div>
+      </section>
+
+      <section class="step-panel" data-step-panel="configure" hidden>
+        <div class="task-card enabled-card" data-toggle-card="upscale">
+          <div class="card-title with-switch">
+            <span><span class="title-token">H</span><strong>视频高清增强</strong></span>
+            <span class="enabled-label">已开启</span>
+            <label class="toggle-switch">
+              <input id="upscale-enabled" type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+          <div class="card-divider"></div>
+          <fieldset>
+            <legend>增强路线</legend>
+            <div class="segmented-control compact">
+              <label>
+                <input name="upscale-route" type="radio" value="conservative" checked />
+                <span>保守修复</span>
+              </label>
+              <label>
+                <input name="upscale-route" type="radio" value="detail" />
+                <span>细节增强</span>
+              </label>
+            </div>
+          </fieldset>
+          <div class="config-row upscale-config">
+            <label class="select-field">
+              <span>目标清晰度</span>
+              <select id="upscale-target">
+                <option value="output">跟随输出分辨率</option>
+                <option value="1280:720">高清 1280x720</option>
+                <option value="720:1280">竖屏高清 720x1280</option>
+                <option value="long-1920">长边 1920px</option>
+                <option value="long-2560">长边 2560px</option>
+                <option value="long-3840" selected>长边 3840px</option>
+              </select>
+            </label>
+            <label class="range-field">
+              <span>锐化</span>
+              <input id="upscale-sharpness" type="range" min="0" max="100" step="1" value="35" />
+              <output id="upscale-sharpness-value">35%</output>
+            </label>
+            <label class="range-field">
+              <span>清晰度</span>
+              <input id="upscale-clarity" type="range" min="0" max="100" step="1" value="22" />
+              <output id="upscale-clarity-value">22%</output>
+            </label>
+          </div>
+          <p class="helper-text">保持原构图和主体关系，只做高质量放大与保守清晰化；文字、人像和 UI 类素材建议使用保守修复。</p>
+          <p class="helper-text">需要高清处理的视频，在上传页对应预览卡勾选“高清处理”；未勾选的视频会按原清晰度处理。</p>
+        </div>
+
+        <div class="task-card enabled-card" data-toggle-card="watermark">
+          <div class="card-title with-switch">
+            <span><span class="title-token">S</span><strong>添加标识语</strong></span>
+            <span class="enabled-label">已开启</span>
+            <label class="toggle-switch">
+              <input id="watermark-enabled" type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+          <div class="card-divider"></div>
+          <div class="config-row">
+            <label class="select-field">
+              <span>常用标识语</span>
+              <select id="identifier-preset"></select>
+            </label>
+            <label class="text-field wide">
+              <span>标识语</span>
+              <input id="identifier-text" autocomplete="off" />
+            </label>
+            <button id="save-identifier-preset" class="tool-button" type="button">保存为常用</button>
+            <label class="range-field">
+              <span>大小（占画面宽度%）</span>
+              <input id="watermark-size" type="range" min="5" max="40" step="1" value="15" />
+              <output id="watermark-size-value">15%</output>
+            </label>
+            <label class="range-field">
+              <span>不透明度</span>
+              <input id="watermark-opacity" type="range" min="10" max="100" step="1" value="85" />
+              <output id="watermark-opacity-value">85%</output>
+            </label>
+            <label class="number-field">
+              <span>X 位置 (%)</span>
+              <input id="identifier-x" type="number" min="0" max="100" step="1" value="50" />
+            </label>
+            <label class="number-field">
+              <span>Y 位置 (%)</span>
+              <input id="identifier-y" type="number" min="0" max="100" step="1" value="8" />
+            </label>
+          </div>
+          <div class="identifier-position-stage" id="identifier-stage">
+            <span id="identifier-preview-text">标识语</span>
+          </div>
+          <p class="helper-text">可直接编辑标识语文字，也可以拖动预览框改变位置。</p>
+        </div>
+
+        <div class="task-card enabled-card" data-toggle-card="ending">
+          <div class="card-title with-switch">
+            <span><span class="title-token">E</span><strong>去除落版</strong></span>
+            <span class="enabled-label">已开启</span>
+            <label class="toggle-switch">
+              <input id="remove-ending" type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+          <div class="card-divider"></div>
+          <div class="config-row ending-config">
+            <label class="number-field">
+              <span>裁掉末尾秒数</span>
+              <input id="ending-seconds" type="number" min="0" max="30" step="0.5" />
+            </label>
+            <button id="apply-ending-tail" class="tool-button" type="button">应用到全部</button>
+            <button id="detect-endings" class="tool-button" type="button">智能检测</button>
+          </div>
+          <p class="helper-text">直接在下面的缩略条拖动白色边框调整保留范围；末尾落版会被排除在白框外。</p>
+          <div id="segments" class="segments-empty"></div>
+        </div>
+
+        <div class="task-card enabled-card" data-toggle-card="merge">
+          <div class="card-title with-switch">
+            <span><span class="title-token">C</span><strong>视频拼接</strong></span>
+            <span class="enabled-label">已开启</span>
+            <label class="toggle-switch">
+              <input id="merge-enabled" type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+          <div class="card-divider"></div>
+          <div class="config-row">
+            <label class="select-field">
+              <span>输出方式</span>
+              <select id="output-mode">
+                <option value="merge">拼接为单个视频</option>
+                <option value="batch">逐段批量导出</option>
+              </select>
+            </label>
+            <label class="select-field">
+              <span>输出分辨率</span>
+              <select id="output-size">
+                <option value="source">保持原尺寸</option>
+                <option value="1920:1080">1920x1080 (1080p)</option>
+                <option value="1280:720">1280x720 (720p)</option>
+                <option value="1080:1920">1080x1920 (竖屏)</option>
+                <option value="720:1280">720x1280 (竖屏)</option>
+              </select>
+            </label>
+            <label class="select-field">
+              <span>输出帧率</span>
+              <select id="output-fps">
+                <option value="24">24 fps</option>
+                <option value="30" selected>30 fps</option>
+                <option value="60">60 fps</option>
+              </select>
+            </label>
+            <label class="text-field">
+              <span>输出文件名</span>
+              <input id="output-name" autocomplete="off" />
+            </label>
+          </div>
+          <p class="helper-text">勾选要参与拼接的视频，拖拽调整顺序。所有视频仍会单独执行标识语/落版操作。</p>
+          <div class="inline-actions">
+            <button id="select-all-segments" class="ghost" type="button">全选</button>
+            <button id="select-no-segments" class="ghost" type="button">全不选</button>
+          </div>
+          <div id="merge-storyboard" class="merge-storyboard"></div>
+          <p class="summary-line" id="selection-summary">已选择 0 / 0 个视频，预计总时长 0.0s</p>
+        </div>
+
+        <div class="footer-actions spread">
+          <button class="ghost" data-prev-step="upload" type="button">← 上一步</button>
+          <button class="primary" data-next-step="process" type="button">开始处理 →</button>
+        </div>
+      </section>
+
+      <section class="step-panel" data-step-panel="process" hidden>
+        <div class="task-card">
+          <div class="card-title">
+            <span class="title-token">P</span>
+            <strong>处理任务</strong>
+          </div>
+          <p id="task-summary" class="task-summary">0 个视频 | 操作：添加标识语 → 去除落版 → 拼接视频</p>
+          <button id="render-output" class="success" type="button">▶ 开始批量处理</button>
+        </div>
+        <p id="status" class="status" role="status"></p>
+        <div class="footer-actions spread">
+          <button class="ghost" data-prev-step="configure" type="button">← 返回配置</button>
+          <div class="project-actions">
+            <button id="undo" class="ghost" type="button">撤销</button>
+            <button id="redo" class="ghost" type="button">重做</button>
+            <button id="download-project" class="ghost" type="button">导出项目</button>
+            <label class="upload-button ghost">
+              导入项目
+              <input id="import-project" type="file" accept="application/json" />
+            </label>
+            <button id="reset-project" class="danger" type="button">重置</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <template id="segment-template">
+      <article class="segment-card" draggable="true">
+        <div class="segment-header">
+          <label class="segment-check">
+            <input data-segment-selected type="checkbox" checked />
+            <strong></strong>
+          </label>
+          <div class="segment-actions">
+            <button data-action="add-after" type="button" title="在后面添加片段">＋</button>
+            <button data-action="up" type="button" title="上移">↑</button>
+            <button data-action="down" type="button" title="下移">↓</button>
+            <button data-action="remove" type="button" title="删除">×</button>
+          </div>
+        </div>
+
+        <div class="segment-body">
+          <div class="video-stage">
+            <video data-preview-video controls playsinline></video>
+            <div class="timeline overlay-timeline" data-timeline>
+              <div class="timeline-fill" data-progress></div>
+              <div class="clip-range hidden" data-range>
+                <span data-handle="start"></span>
+                <span data-handle="end"></span>
+              </div>
+            </div>
+          </div>
+          <div class="time-row">
+            <span data-start-label>0:00</span>
+            <span data-current-time>0:00</span>
+            <span data-end-label>0:00</span>
+          </div>
+          <div class="editor-strip" data-editor-strip>
+            <div class="strip-label" data-strip-label></div>
+            <div class="strip-thumbs" data-strip-thumbs></div>
+            <div class="strip-wave" data-strip-wave></div>
+            <div class="strip-range" data-strip-range>
+              <span data-strip-handle="start"></span>
+              <span data-strip-handle="end"></span>
+            </div>
+            <div class="strip-playhead" data-strip-playhead></div>
+          </div>
+          <div class="clip-actions">
+            <button data-action="scissor" class="scissor-button" type="button" title="按当前进度创建剪辑区间">✂</button>
+            <button data-action="detect-ending" class="ghost" type="button">识别落版</button>
+            <button data-action="clear-range" class="ghost hidden" type="button">去掉区间</button>
+            <button data-action="play-range" class="ghost" type="button">预览区间</button>
+            <label class="upload-button ghost compact-upload">
+              选择视频
+              <input data-segment-file type="file" accept="video/mp4,video/webm,video/quicktime,video/*" />
+            </label>
+            <span data-preview-name></span>
+          </div>
+          <div class="segment-note" data-segment-note></div>
+        </div>
+      </article>
+    </template>
+
+    <script src="merge.js"></script>
+  </body>
+</html>

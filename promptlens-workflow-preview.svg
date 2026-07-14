@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1424" height="768" viewBox="0 0 1424 768">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#2b79a9" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .cn { font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif; }
+      .title { font-size: 28px; font-weight: 800; fill: #06142d; }
+      .sub { font-size: 14px; fill: #477090; }
+      .card-title { font-size: 15px; font-weight: 800; fill: #06142d; }
+      .pill { font-size: 12px; fill: #176397; }
+      .info { font-size: 14px; fill: #041b35; }
+      .info-bold { font-weight: 800; }
+      .demo-title { font-size: 20px; font-weight: 800; fill: #0b5f8f; }
+      .demo-name { font-size: 16px; font-weight: 800; fill: #0e6090; }
+      .demo-desc { font-size: 12px; fill: #5d7f98; }
+      .note { font-size: 13px; fill: #597f9b; }
+    </style>
+  </defs>
+
+  <rect width="1424" height="768" fill="#f3f8fc"/>
+  <rect x="12" y="11" width="1400" height="750" rx="30" fill="#fff" stroke="#b9d9ee"/>
+
+  <rect x="37" y="39" width="6" height="40" fill="#1f7fa9"/>
+  <rect x="62" y="46" width="30" height="28" rx="4" fill="#0d7bb3"/>
+  <text x="77" y="66" text-anchor="middle" class="cn" font-size="20" fill="#fff">↪</text>
+  <text x="102" y="69" class="cn title">PromptLens Jimeng · 工作流逻辑图</text>
+  <rect x="1186" y="46" width="200" height="28" rx="14" fill="#237fa4"/>
+  <text x="1286" y="65" text-anchor="middle" class="cn" font-size="14" font-weight="700" fill="#fff">识图 + 识视频 + 生图预览</text>
+
+  <text x="58" y="117" class="cn sub">网页素材 → AI 识别 → 提示词/分镜 → 人工编辑 → 生图预览/即梦生成 → 下载归档</text>
+
+  <!-- flow cards -->
+  <g filter="url(#shadow)">
+    <rect x="142" y="153" width="134" height="138" rx="42" fill="#fff" stroke="#cfe4f5"/>
+    <text x="209" y="207" text-anchor="middle" font-size="32">🖼️</text>
+    <text x="209" y="237" text-anchor="middle" class="cn card-title">网页图片 / 视频</text>
+    <rect x="175" y="251" width="68" height="24" rx="12" fill="#edf5ff"/>
+    <text x="209" y="267" text-anchor="middle" class="cn pill">悬浮入口</text>
+
+    <text x="301" y="228" text-anchor="middle" font-size="28" fill="#1f7fa9">→</text>
+
+    <rect x="327" y="153" width="172" height="138" rx="42" fill="#fff" stroke="#cfe4f5"/>
+    <text x="413" y="207" text-anchor="middle" font-size="32">🧠</text>
+    <text x="413" y="237" text-anchor="middle" class="cn card-title">AI 识图 / 识视频</text>
+    <rect x="348" y="251" width="130" height="24" rx="12" fill="#edf5ff"/>
+    <text x="413" y="267" text-anchor="middle" class="cn pill">Gemini / GPT / 豆包</text>
+
+    <text x="512" y="228" text-anchor="middle" font-size="28" fill="#1f7fa9">→</text>
+
+    <rect x="537" y="153" width="146" height="138" rx="42" fill="#fff" stroke="#cfe4f5"/>
+    <text x="610" y="207" text-anchor="middle" font-size="32">📝</text>
+    <text x="610" y="237" text-anchor="middle" class="cn card-title">提示词与分镜</text>
+    <rect x="560" y="251" width="100" height="24" rx="12" fill="#edf5ff"/>
+    <text x="610" y="267" text-anchor="middle" class="cn pill">镜头/BGM/画面</text>
+
+    <text x="702" y="228" text-anchor="middle" font-size="28" fill="#1f7fa9">→</text>
+
+    <rect x="728" y="153" width="146" height="138" rx="42" fill="#fff" stroke="#cfe4f5"/>
+    <text x="801" y="207" text-anchor="middle" font-size="32">✍️</text>
+    <text x="801" y="237" text-anchor="middle" class="cn card-title">人工编辑调整</text>
+    <rect x="759" y="251" width="84" height="24" rx="12" fill="#edf5ff"/>
+    <text x="801" y="267" text-anchor="middle" class="cn pill">主体/场景/风格</text>
+
+    <text x="894" y="228" text-anchor="middle" font-size="28" fill="#1f7fa9">→</text>
+
+    <rect x="919" y="153" width="186" height="138" rx="42" fill="#fff" stroke="#cfe4f5"/>
+    <text x="1012" y="207" text-anchor="middle" font-size="32">🌈</text>
+    <text x="1012" y="237" text-anchor="middle" class="cn card-title">生图预览 / 即梦</text>
+    <rect x="950" y="251" width="124" height="24" rx="12" fill="#edf5ff"/>
+    <text x="1012" y="267" text-anchor="middle" class="cn pill">9:16 / 16:9 / 3:4</text>
+
+    <text x="1130" y="228" text-anchor="middle" font-size="28" fill="#1f7fa9">→</text>
+
+    <rect x="1155" y="153" width="140" height="138" rx="42" fill="#fff" stroke="#cfe4f5"/>
+    <text x="1225" y="207" text-anchor="middle" font-size="32">📁</text>
+    <text x="1225" y="237" text-anchor="middle" class="cn card-title">下载与归档</text>
+    <rect x="1180" y="251" width="90" height="24" rx="12" fill="#edf5ff"/>
+    <text x="1225" y="267" text-anchor="middle" class="cn pill">图片/视频/分镜</text>
+  </g>
+
+  <rect x="37" y="312" width="1350" height="84" rx="20" fill="#f7fbff" stroke="#d4e6f4"/>
+  <text x="60" y="344" class="cn info">🤖 <tspan class="info-bold">识别 API：</tspan> Gemini / GPT / 豆包 / 即梦，可独立配置。</text>
+  <text x="685" y="344" class="cn info">🎨 <tspan class="info-bold">生图 API：</tspan> GPT、Gemini、豆包、即梦，可单独配置 Key。</text>
+  <text x="60" y="378" class="cn info">⚙️ <tspan class="info-bold">核心能力：</tspan> 抽帧、提示词反推、分镜编辑、比例预览、镜头跳转、下载归档。</text>
+
+  <rect x="37" y="428" width="1350" height="246" rx="28" fill="#f8fdff" stroke="#c5e3f4"/>
+  <text x="63" y="469" class="cn demo-title">🎬 常用操作入口</text>
+
+  <g filter="url(#shadow)">
+    <rect x="388" y="494" width="200" height="126" rx="22" fill="#fff" stroke="#d5e7f4"/>
+    <text x="488" y="542" text-anchor="middle" font-size="34">🔍</text>
+    <text x="488" y="580" text-anchor="middle" class="cn demo-name">识图</text>
+    <text x="488" y="605" text-anchor="middle" class="cn demo-desc">编辑提示词，生图预览</text>
+
+    <rect x="612" y="494" width="200" height="126" rx="22" fill="#fff" stroke="#d5e7f4"/>
+    <text x="712" y="542" text-anchor="middle" font-size="34">🎞️</text>
+    <text x="712" y="580" text-anchor="middle" class="cn demo-name">识视频</text>
+    <text x="712" y="605" text-anchor="middle" class="cn demo-desc">选择秒数，生成分镜</text>
+
+    <rect x="836" y="494" width="200" height="126" rx="22" fill="#fff" stroke="#d5e7f4"/>
+    <text x="936" y="542" text-anchor="middle" font-size="34">⏱️</text>
+    <text x="936" y="580" text-anchor="middle" class="cn demo-name">镜头跳转</text>
+    <text x="936" y="605" text-anchor="middle" class="cn demo-desc">点击时间跳到对应帧</text>
+
+    <rect x="1060" y="494" width="200" height="126" rx="22" fill="#fff" stroke="#d5e7f4"/>
+    <text x="1160" y="542" text-anchor="middle" font-size="34">⬇️</text>
+    <text x="1160" y="580" text-anchor="middle" class="cn demo-name">下载</text>
+    <text x="1160" y="605" text-anchor="middle" class="cn demo-desc">预览图 / 当前视频</text>
+  </g>
+
+  <text x="712" y="720" text-anchor="middle" class="cn note">🧩 当前闭环：素材抓取 → AI 反推 → 人工可编辑 → 生成预览 → 下载沉淀，适合广告素材拆解、即梦提示词生产和视频分镜复用。</text>
+</svg>

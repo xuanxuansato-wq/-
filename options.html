@@ -1,0 +1,141 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PromptLens Jimeng 设置</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="settings-shell">
+      <header>
+        <p>PromptLens Jimeng</p>
+        <h1>识图识视频，反推即梦关键词</h1>
+      </header>
+
+      <form id="settings-form" class="settings-form">
+        <section class="settings-group">
+          <div class="settings-group-header">
+            <h2>识别 API</h2>
+            <button type="button" id="restore-provider">填入识别默认值</button>
+          </div>
+
+          <label>
+            <span>识别服务商</span>
+            <select name="provider" id="provider">
+              <option value="gpt">GPT / OpenAI</option>
+              <option value="qwen">千问 / 阿里百炼</option>
+              <option value="jimeng">即梦 / Seedream（火山）</option>
+              <option value="doubao">豆包 / 火山方舟</option>
+              <option value="gemini">Gemini</option>
+            </select>
+          </label>
+
+          <label>
+            <span>识别 Base URL</span>
+            <input name="baseUrl" id="baseUrl" autocomplete="off" />
+          </label>
+
+          <label>
+            <span>识别模型名称</span>
+            <input name="model" id="model" autocomplete="off" />
+          </label>
+
+          <label>
+            <span>识别 API Key</span>
+            <input name="apiKey" id="apiKey" type="password" autocomplete="off" />
+          </label>
+        </section>
+
+        <section class="settings-group">
+          <div class="settings-group-header">
+            <h2>生图预览 API</h2>
+            <button type="button" id="restore-image-preview-provider">填入生图默认值</button>
+          </div>
+
+          <label>
+            <span>生图服务商</span>
+            <select name="imagePreviewProvider" id="imagePreviewProvider">
+              <option value="gpt">GPT / OpenAI</option>
+              <option value="jimeng">即梦 / Seedream（火山）</option>
+              <option value="doubao">豆包 / 火山方舟</option>
+              <option value="gemini">Gemini</option>
+            </select>
+          </label>
+
+          <label>
+            <span>生图 Base URL</span>
+            <input name="imagePreviewBaseUrl" id="imagePreviewBaseUrl" autocomplete="off" />
+          </label>
+
+          <div class="split">
+            <label>
+              <span>生图预览模型</span>
+              <input name="imagePreviewModel" id="imagePreviewModel" autocomplete="off" />
+            </label>
+
+            <label>
+              <span>生图预览质量</span>
+              <select name="imagePreviewQuality" id="imagePreviewQuality">
+                <option value="low">Low / 预览省额度</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="auto">Auto</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            <span>生图预览尺寸</span>
+            <select name="imagePreviewSize" id="imagePreviewSize">
+              <option value="ratio-1-1">1:1 方图（通用）</option>
+              <option value="ratio-9-16">9:16 竖屏</option>
+              <option value="ratio-16-9">16:9 横屏</option>
+              <option value="ratio-3-4">3:4 竖图</option>
+              <option value="ratio-4-3">4:3 横图</option>
+              <option value="1024x1024">1024 × 1024</option>
+              <option value="1024x1536">1024 × 1536</option>
+              <option value="1536x1024">1536 × 1024</option>
+              <option value="2048x2048">2048 × 2048</option>
+              <option value="2K">2K（豆包/即梦推荐）</option>
+              <option value="4K">4K（豆包/即梦）</option>
+              <option value="auto">Auto / Gemini 推荐</option>
+            </select>
+          </label>
+
+          <label>
+            <span>生图 API Key</span>
+            <input name="imagePreviewApiKey" id="imagePreviewApiKey" type="password" autocomplete="off" />
+          </label>
+        </section>
+
+        <div class="split">
+          <label>
+            <span>视频抽帧数</span>
+            <input name="maxVideoFrames" id="maxVideoFrames" type="number" min="1" max="24" />
+          </label>
+
+          <label>
+            <span>单帧最长边</span>
+            <input name="maxFrameSize" id="maxFrameSize" type="number" min="384" max="1280" />
+          </label>
+        </div>
+
+        <div class="actions">
+          <button type="submit">保存设置</button>
+        </div>
+
+        <p id="status" class="status" role="status"></p>
+      </form>
+
+      <section class="notes">
+        <h2>隐私与限制</h2>
+        <p>API Key 只保存在本机 Chrome storage。识别和生图预览可以使用不同服务商、不同 Base URL 和不同 API Key。</p>
+        <p>千问识别默认使用阿里百炼 OpenAI 兼容接口 <code>qwen-vl-plus</code>，Base URL 为 <code>https://dashscope.aliyuncs.com/compatible-mode/v1</code>。</p>
+        <p>Gemini 生图预览默认使用 <code>gemini-2.5-flash-image</code>；GPT 默认使用 <code>gpt-image-1.5</code>；豆包/即梦默认使用火山方舟 Seedream。</p>
+      </section>
+    </main>
+
+    <script src="options.js"></script>
+  </body>
+</html>

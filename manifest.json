@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "PromptLens Jimeng",
+  "version": "0.2.86",
+  "description": "Reverse image and video prompts for Jimeng, plus direct video download shortcuts.",
+  "permissions": ["storage", "downloads", "unlimitedStorage", "clipboardRead", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html",
+  "action": {
+    "default_title": "PromptLens Jimeng",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle",
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ]
+}
