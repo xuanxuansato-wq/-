@@ -89,16 +89,16 @@ const MAX_MEDIA_CANDIDATES_PER_TAB = 40;
 const mediaCandidatesByTab = new Map();
 
 globalThis.addEventListener?.("error", (event) => {
-  console.error("[PromptLens Jimeng] Service worker error:", event.error || event.message);
+  console.error("[Online Image & Video Recognition] Service worker error:", event.error || event.message);
 });
 
 globalThis.addEventListener?.("unhandledrejection", (event) => {
-  console.error("[PromptLens Jimeng] Service worker rejection:", event.reason);
+  console.error("[Online Image & Video Recognition] Service worker rejection:", event.reason);
 });
 
 safeAddListener(chrome.runtime?.onInstalled, () => {
   ensureDefaultSettings().catch((error) => {
-    console.error("[PromptLens Jimeng] Failed to initialize settings:", error);
+    console.error("[Online Image & Video Recognition] Failed to initialize settings:", error);
   });
 });
 
@@ -135,7 +135,7 @@ function safeAddListener(event, listener, ...args) {
     event.addListener(listener, ...args);
     return true;
   } catch (error) {
-    console.warn("[PromptLens Jimeng] Listener registration skipped:", error);
+    console.warn("[Online Image & Video Recognition] Listener registration skipped:", error);
     return false;
   }
 }
@@ -1584,7 +1584,7 @@ function buildVideoFilename(name) {
     .replace(/\.(?:js|mjs|css|html?|json|map|mp4|webm|mov|m4v|mkv|avi)$/i, "")
     .trim()
     .slice(0, 80);
-  return `PromptLens/${cleanName || "downloaded-video"}.mp4`;
+  return `Online Image & Video Recognition/${cleanName || "downloaded-video"}.mp4`;
 }
 
 function buildMediaFilename(name, kind, url) {
@@ -1596,7 +1596,7 @@ function buildMediaFilename(name, kind, url) {
     .trim()
     .slice(0, 80);
   const extension = getMediaExtension(kind, url);
-  return `PromptLens/${cleanName || "media-file"}${extension}`;
+  return `Online Image & Video Recognition/${cleanName || "media-file"}${extension}`;
 }
 
 function getMediaExtension(kind, url) {

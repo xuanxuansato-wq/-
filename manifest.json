@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "PromptLens Jimeng",
-  "version": "0.2.86",
+  "name": "Online Image & Video Recognition",
+  "version": "0.2.87",
   "description": "Reverse image and video prompts for Jimeng, plus direct video download shortcuts.",
   "permissions": ["storage", "downloads", "unlimitedStorage", "clipboardRead", "tabs"],
   "host_permissions": ["<all_urls>"],
@@ -10,7 +10,7 @@
   },
   "options_page": "options.html",
   "action": {
-    "default_title": "PromptLens Jimeng",
+    "default_title": "Online Image & Video Recognition",
     "default_popup": "popup.html"
   },
   "content_scripts": [

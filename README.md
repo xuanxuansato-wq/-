@@ -1,6 +1,6 @@
-# PromptLens Jimeng
+﻿# Online Image & Video Recognition
 
-PromptLens Jimeng 是一个 Chrome Manifest V3 扩展，用于网页图片/视频提示词反推、视频下载辅助，以及本地视频标识与剪辑项目整理。
+Online Image & Video Recognition 是一个 Chrome Manifest V3 扩展，用于网页图片/视频提示词反推、视频下载辅助，以及本地视频标识与剪辑项目整理。
 
 ## 主要功能
 

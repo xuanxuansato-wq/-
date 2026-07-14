@@ -1873,7 +1873,7 @@
           downloadButton.textContent = originalText;
         }, 1200);
       } catch (error) {
-        console.error("[PromptLens Jimeng] 图片下载失败", error);
+        console.error("[Online Image & Video Recognition] 图片下载失败", error);
         downloadButton.textContent = "下载失败";
         window.setTimeout(() => {
           downloadButton.textContent = originalText;
@@ -2115,7 +2115,7 @@
       });
       button.textContent = "已打开";
     } catch (error) {
-      console.error("[PromptLens Jimeng] 打开分镜编辑器失败", error);
+      console.error("[Online Image & Video Recognition] 打开分镜编辑器失败", error);
       button.textContent = "打开失败";
       showError("打开失败", error.message || "无法打开分镜编辑器。");
     } finally {
@@ -2217,7 +2217,7 @@
       video.pause?.();
       flashButtonText(feedbackButton, "已跳转");
     } catch (error) {
-      console.error("[PromptLens Jimeng] 分镜跳转失败", error);
+      console.error("[Online Image & Video Recognition] 分镜跳转失败", error);
       flashButtonText(feedbackButton, "跳转失败");
     }
   }
@@ -2329,7 +2329,7 @@
         }
         return;
       } catch (error) {
-        console.error("[PromptLens Jimeng] 按大纲重写分镜失败", error);
+        console.error("[Online Image & Video Recognition] 按大纲重写分镜失败", error);
         applyStoryboardLocalReplacement(block);
         if (button) {
           button.textContent = "重写失败，已基础替换";
@@ -2818,7 +2818,7 @@
       positionToolbar(video);
       toolbar.hidden = false;
     } catch (error) {
-      console.warn("[PromptLens Jimeng] 原页面视频定位失败", error);
+      console.warn("[Online Image & Video Recognition] 原页面视频定位失败", error);
     }
   }
 
